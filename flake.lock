@@ -67,6 +67,19 @@
         "type": "github"
       }
     },
+    "languageModel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1758995443,
+        "narHash": "sha256-yaSgYtA7SAbQqWC3ZtV7VCiX05NSAR8JlRmb6u34QfQ=",
+        "path": "/tmp/lm",
+        "type": "path"
+      },
+      "original": {
+        "path": "/tmp/lm",
+        "type": "path"
+      }
+    },
     "nixVim": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -75,11 +88,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1758834902,
-        "narHash": "sha256-Pt7YS5qKMdh6gU0NP6+7qfe/TFlgjo2gnOSmF9fLQ9A=",
+        "lastModified": 1758931855,
+        "narHash": "sha256-jTmbWlOxsy9dDP3UdCB6jEO63FtkM3dQG2FOq0b4foI=",
         "owner": "nix-community",
         "repo": "nixvim",
-        "rev": "da7b983a29ffb8a390a4be7dfd643467c63543bf",
+        "rev": "e0f1e4ae4bb8762b7c51c3a514ca19664fad9c3b",
         "type": "github"
       },
       "original": {
@@ -90,15 +103,31 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1758701979,
-        "narHash": "sha256-c7DUti3XM1aga8oVgaPnrVmEeCFtN9PaBxyNuqx8jPc=",
+        "lastModified": 1758763312,
+        "narHash": "sha256-puBMviZhYlqOdUUgEmMVJpXqC/ToEqSvkyZ30qQ09xM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e2642aa7d5a15eae586932a56f4294934f959c14",
+        "rev": "e57b3b16ad8758fd681511a078f35c416a8cc939",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1758916627,
+        "narHash": "sha256-fB2ISCc+xn+9hZ6gOsABxSBcsCgLCjbJ5bC6U9bPzQ4=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "53614373268559d054c080d070cfc732dbe68ac4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
         "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
@@ -146,7 +175,9 @@
     },
     "root": {
       "inputs": {
+        "languageModel": "languageModel",
         "nixVim": "nixVim",
+        "nixpkgs": "nixpkgs_2",
         "orgmodeSrc": "orgmodeSrc"
       }
     },

@@ -1,6 +1,6 @@
 {
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     orgmodeSrc = {
       url = "github:bolives-hax/orgmode/orgmode_force_count_hacks";
       flake = false;
@@ -8,10 +8,21 @@
     nixVim = {
       url = "github:nix-community/nixvim";
     };
+    languageModel = {
+      url = "path:/tmp/lm";
+      flake = false;
+    };
   };
 
 
-  outputs = {self,orgmodeSrc,nixVim}: {
+  outputs = {self,nixpkgs,orgmodeSrc,nixVim,languageModel}: {
+    nixosConfigurations.t = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        { boot.isContainer = true; }
+        self.nixosModules.orgmodeNeovimDaemon
+      ];
+    };
     overlays.default = final: prev: {
       # V vimPlugins doens't respect what we do
       # here as it seems
@@ -33,34 +44,58 @@
         });
       };
     };
-    nixosModules.default  = self.ghettoOrcmodeDaemon;
-    nixosModules.ghettoOrcmodeDaemon = {pkgs,...}: {
-      nixpkgs.overlays = [self.overlays.default];
+    nixosModules.default  = self.nixosModules.orgmodeNeovimDaemon;
+    nixosModules.orgmodeNeovimDaemon = {pkgs,...}: {
       imports = [
-        #./module.nix
+        ./module.nix
       ];
-    };
+      orgmodeNvimDaemon = {
+        enable = true;
+        # TODO less ghetto + generic name so you can switch/use multiple
+        phoneReminder = {
+          enable = true;
+          languageModelPackage = "${languageModel}";
+        };
+        package = nixVim.legacyPackages.x86_64-linux.makeNixvimWithModule {
+          module = {
+            imports = [
+              self.nixvimModules.default
+            ];
+            plugins.orgmode.settings = {
+              org_agenda_files = "/tmp/flandre/orgfiles/**/*";
+              org_default_notes_file = "/tmp/flandre/orgfiles/refile.org";
+            };
+          };
+        };
+      };
+      #nvimOrgmodeDaemon = {
+      #    module = {
+      #    };
+      #  };  
+      #};
+    };#
 
     #nixvimModules.neovimOrgmodeNotifier
     nixvimModules.default = {config,lib,pkgs,...}: let
       in {
         nixpkgs.overlays = [ self.overlays.default ];
-        extraPackages = with pkgs;[
+        extraPackagesAfter = with pkgs;[
           # needed so it can send notifications to e.g sway
           # TODO remove this 
-          notifymuch
+          libnotify
         ];
 
         /*extraPlugins = with pkgs.vimPlugins; [
           orgmode
         ];*/
 
+        # TODO strip down the size of neovim by omitting
+        # stuff we don't need like ruby ig
+
         plugins.orgmode = {
           enable = true;
           package = pkgs.vimPlugins.orgmode;
           settings = {
-            org_agenda_files = "~/orgfiles/**/*";
-            org_default_notes_file = "~/orgfiles/refile.org";
             notifications = {
               enabled = false;
               cron_enabled = true;
@@ -77,8 +112,16 @@
         #extraConfigLua = builtins.readFile ./custom_orgmode_setup.lua;
       };
 
-    packages.x86_64-linux.neovimOrgmodeDaemon = nixVim.legacyPackages.x86_64-linux.makeNixvimWithModule {
-      module = self.nixvimModules.default;
+    packages.x86_64-linux.neovimOrgmode = nixVim.legacyPackages.x86_64-linux.makeNixvimWithModule {
+      module = {
+        imports = [
+          self.nixvimModules.default
+        ];
+        plugins.orgmode.settings = {
+            org_agenda_files = "~/orgfiles/**/*";
+            org_default_notes_file = "~/orgfiles/refile.org";
+        };
+      };
     };
   };
 

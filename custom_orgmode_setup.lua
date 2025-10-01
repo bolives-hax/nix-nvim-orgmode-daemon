@@ -30,28 +30,32 @@ return function(tasks)
 	
 	          if force_count  then
 			  local tasks = require('orgmode').get_agenda_tasks_today()
-	        	  vim.system({
-	        		  "notify-send",
-				  string.format('RISE AND SHINE: %d Tasks on todays agenda',
-				  	table.getn(tasks))
-	        	  })
+
+			  prog_name = "call_sip"
+			  task_count = table.getn(tasks)
+			  greeting = string.format(
+				  "Rise and shine Mister freeman, you have %u tasks on your agenda today.",
+				  task_count)
+			  tasks_listing = ""
+
+			  for taskno,task in ipairs(tasks) do
+				  tasks_listing = 
+				  string.format("%s Task number: %u: %s",
+				  tasks_listing, taskno, task.title)
+			  end
+			  tasks_listing = tasks_listing .. " these were all tasks"
+
+
+			  -- TODO allow this to be  passed via an env var or read in from a json file
+			  number = "+3851580000000"
+			  local res = vim.system({"call_sip", greeting, tasks_listing, number}, {text = true}):wait()
+			  if res.code ~= 0 then
+				-- for some reason this takes place 
+				vim.api.nvim_echo({{"ERROR: "}, {res.stderr}}, true , {err = true})
+			  else
+			  	vim.api.nvim_echo({{"call to: "}, {number}, {"succeeded\n"} ,{res.stdout}}, true , {err = true})
+			  end
 	          end
 	  end
-	  --local msg = "a"
-	  -- Linux
-	  if vim.fn.executable('notify-send') == 1 then
-	    vim.system({
-	      'notify-send',
-	      	--msg
-		title, 9
-		--title .. msg,
-		,string.format('%s\n%s', subtitle, date)
-	    })
-	
-	    --vim.system({
-	    --  'twinkle', '--immediate',
-	    --  '--cmd',
-	    --})
-	  end
-  	end
+	end
 end
