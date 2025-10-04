@@ -79,6 +79,10 @@
     nixvimModules.default = {config,lib,pkgs,...}: let
       in {
         nixpkgs.overlays = [ self.overlays.default ];
+        extraPackages = with pkgs; [
+          sox
+          piper-tts
+        ];
         extraPackagesAfter = with pkgs;[
           # needed so it can send notifications to e.g sway
           # TODO remove this 
@@ -103,7 +107,14 @@
       #-- can be called via nvim --headless -c 'lua require("orgmode").cron()'
       #-- ensure that notify-send is in PATH of nvim and working properly!!!
               reminder_time = [ 0 ];
-              cron_notifier = lib.nixvim.utils.mkRaw "dofile('${./custom_orgmode_setup.lua}')";
+              cron_notifier = let
+                f = pkgs.writeText "cron.lua" ''
+                  call_utils = dofile("${./gen_callfile.lua}")
+		  local perform_task_call = dofile("${./perform_task_call.lua}")
+
+                  ${builtins.readFile ./custom_orgmode_setup.lua}
+                '';
+              in lib.nixvim.utils.mkRaw "dofile('${f}')";
             };
           };
           

@@ -66,24 +66,38 @@
         #XDG_RUNTIME_DIR = "/run/user/1000";
         #WAYLAND_DISPLAY = "wayland-1";
         #XDG_STATE_HOME = "/run/orgmodenvimd/";
-        #HOME = "/run/orgmodenvimd/";
-        HOME = "/tmp/n";
+        # TODO rather use the env vars specified below
+        STATIC_SOUNDS_DIR = "/nix/store/l747zs99y5x0w987z0kxm2rx1pl14341-asterisk_custom_piper_sounds/";
+        AUDIO_DIR = "/var/lib/orgmodenvimd";
+        CALL_TARGET = "+38500000000";
+        TEMP_DIR = "/run/orgmodenvimd/";
+        HOME = "/run/orgmodenvimd";
       };
       serviceConfig = {
         Type = "simple";
         # TODO 
         User = "orgmodenvimd";
-        #Group = "asterisk";
+        Group = "orgmodenvimd";
         SupplementaryGroups=[ "asterisk" ];
         # V do we really need to make  a script for this? maybe w can escape the "s properly!?
         ExecStart = pkgs.writeShellScript "check-tasks" ''
           ${orgmodeNvimDaemon.package}/bin/nvim  --headless -i NONE -c "lua = require('orgmode').cron()"
         '';
-          # V do de even need ShaDa?
-          #"-i NONE
-        #]);
-        #RuntimeDirectory = "orgmodenvimd";
-        #RuntimeDirectoryMode = "0700";
+        RuntimeDirectory = "orgmodenvimd";
+        RuntimeDirectoryMode = "0770";
+        # V /var/lib
+        StateDirectory = "orgmodenvimd";
+        StateDirectoryMode = "0775";
+        /*
+            TODO ^  from https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#RuntimeDirectory=
+
+          Directory	Below path for system units	Below path for user units	Environment variable set
+          RuntimeDirectory=	/run/	$XDG_RUNTIME_DIR	$RUNTIME_DIRECTORY
+          StateDirectory=	/var/lib/	$XDG_STATE_HOME	$STATE_DIRECTORY
+          CacheDirectory=	/var/cache/	$XDG_CACHE_HOME	$CACHE_DIRECTORY
+          LogsDirectory=	/var/log/	$XDG_STATE_HOME/log/	$LOGS_DIRECTORY
+          ConfigurationDirectory=	/etc/	$XDG_CONFIG_HOME	$CONFIGURATION_DIRECTORY
+        */
       };
     };
   };
