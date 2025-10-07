@@ -39,23 +39,16 @@ function dbg(s)
 end
 
 
-return function(tasks)
+function run(tasks)
+
+	-- TODO V in theory we souldn't need this function anymore since
+	-- 		i figured out how error handling works now
 	check_requirements()
 	
 	for _, task in ipairs(tasks) do
 	  local title = string.format('%s (%s)', task.category, task.humanized_duration)
 	  local subtitle = string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title)
 	  local date = string.format('%s: %s', task.type, task.time:to_string())
-	
-	  
-	  local urgency = "--urgency=normal"
-	  --if task.priority ~= nil then
-	  --        urgency = ({
-	  --      	  "A" = "critical",
-	  --      	  "B" = "normal",
-	  --      	  "C" = "low"
-	  --        })[task.priority]
-	  --end
 	
 	  
 	  -- TODO in theory no needed as we can iterate over it when empty
@@ -74,17 +67,74 @@ return function(tasks)
 	          if force_count then
 			  local tasks = require('orgmode').get_agenda_tasks_today()
 			  
+			  local temp_dir = vim.env.TEMP_DIR or  os.getenv("TEMP_DIR")
+			  if temp_dir == nil then
+				  print_error("TEMP_DIR is unset!")
+				  -- TODO make it so that if we are NOT running as a systemd service
+				  -- 		we create a dir under /tmp/ and use that ... but systemd
+				  -- 			provides /run/
+			  end
 
-			  perform_task_call({
-				  audio_files_output_dir = vim.env.AUDIO_DIR or  os.getenv("AUDIO_DIR"),
-				  temp_callfile_dir  = vim.env.TEMP_DIR or  os.getenv("TEMP_DIR"),
-				  temp_audio_files_dir = vim.env.TEMP_DIR or  os.getenv("TEMP_DIR"),
-			  },tasks,call_utils,vim.env.CALL_TARGET or os.getenv("CALL_TARGET"),
-			  vim.env.STATIC_SOUNDS_DIR or os.getenv("STATIC_SOUNDS_DIR"))
+			  local static_sounds_dir = vim.env.STATIC_SOUNDS_DIR or os.getenv("STATIC_SOUNDS_DIR")
+			  if static_sounds_dir == nil then
+				  print_error("STATIC_SOUNDS_DIR is unset!")
+				  -- TODO make it so that if we are NOT running as a systemd service
+				  -- 		we create a dir under /tmp/ and use that ... but systemd
+				  -- 			provides /run/
+			  end
+
+			  local call_target = vim.env.CALL_TARGET or os.getenv("CALL_TARGET")
+			  if call_target == nil then
+				  print_error("CALL_TARGET is unset!")
+				  -- TODO make it so that if we are NOT running as a systemd service
+				  -- 		we create a dir under /tmp/ and use that ... but systemd
+				  -- 			provides /run/
+			  end
+
+			  local audio_files_output_dir = vim.env.AUDIO_DIR or  os.getenv("AUDIO_DIR")
+			  if audio_files_output_dir == nil then
+				  print_error("AUDIO_DIR is unset!!")
+			  end
+
+			  perform_task_call(
+				{
+					audio_files_output_dir = audio_files_output_dir,
+					temp_callfile_dir  = temp_dir,
+					temp_audio_files_dir = temp_dir,
+			  	},
+			  	tasks,
+			  	call_utils,
+			  	call_target,
+			  	static_sounds_dir
+			  )
 
 
 
 	          end
 	  end
+	end
+end
+
+function print_error(error_msg)
+	vim.api.nvim_echo(
+	        {{"error: \"" .. error_msg .. "\""}},
+	        true , {err = true})
+	assert(false)
+end
+-- makeshift try_run()
+return function(tasks)
+	if tasks == nil then
+		print_error("function called with tasks == nil")
+	elseif table.getn(tasks) < 1 then
+		--print_error("function called with under 1 task")
+		print("function called without any tasks ... doing nothing")
+	else
+		local ok,result = pcall(function()
+			run(tasks)
+		end)
+
+		if not ok then
+			print_error("run(tasks) failed with: \"" .. result.. "\"")
+		end
 	end
 end

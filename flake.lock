@@ -67,17 +67,28 @@
         "type": "github"
       }
     },
-    "languageModel": {
+    "languageModelConfig": {
       "flake": false,
       "locked": {
-        "lastModified": 1758995443,
-        "narHash": "sha256-yaSgYtA7SAbQqWC3ZtV7VCiX05NSAR8JlRmb6u34QfQ=",
-        "path": "/tmp/lm",
-        "type": "path"
+        "narHash": "sha256-p1jrdnHEXeODQdg4+AkvZPDEo7LuYtFma0qKirrsZik=",
+        "type": "file",
+        "url": "https://huggingface.co/csukuangfj/vits-piper-en_US-amy-low/resolve/main/en_US-amy-low.onnx.json"
       },
       "original": {
-        "path": "/tmp/lm",
-        "type": "path"
+        "type": "file",
+        "url": "https://huggingface.co/csukuangfj/vits-piper-en_US-amy-low/resolve/main/en_US-amy-low.onnx.json"
+      }
+    },
+    "languageModelData": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-FRWQcg56KnL6zU/fnYpqAnMUxFNByqpz9OF7RNrPbNs=",
+        "type": "file",
+        "url": "https://huggingface.co/csukuangfj/vits-piper-en_US-amy-low/resolve/main/en_US-amy-low.onnx"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://huggingface.co/csukuangfj/vits-piper-en_US-amy-low/resolve/main/en_US-amy-low.onnx"
       }
     },
     "nixVim": {
@@ -119,16 +130,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1758916627,
-        "narHash": "sha256-fB2ISCc+xn+9hZ6gOsABxSBcsCgLCjbJ5bC6U9bPzQ4=",
+        "lastModified": 1759772810,
+        "narHash": "sha256-8/sO67+Q6yNfFD39W5SXQHDbf/tQUHWFhCdxgRRGVCQ=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "53614373268559d054c080d070cfc732dbe68ac4",
+        "rev": "2b78ecc45e163d655c08c9a4cffb4a91c66d0493",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixpkgs-unstable",
+        "ref": "master",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -159,11 +170,11 @@
     "orgmodeSrc": {
       "flake": false,
       "locked": {
-        "lastModified": 1758905702,
-        "narHash": "sha256-CueD5RZvRbKo6nKVsgeB19Bu9x4WB87yrzNJWSCa0E8=",
+        "lastModified": 1759865654,
+        "narHash": "sha256-BGva1n2OADndsl8xxXTicgycvbybgBg9+O6sMLAye0Q=",
         "owner": "bolives-hax",
         "repo": "orgmode",
-        "rev": "cff0d5030012cea4469c6b50a2fe803ae4251a34",
+        "rev": "7e057f2a9bd29a6b3ae786fb4b7dfaf85760316b",
         "type": "github"
       },
       "original": {
@@ -175,10 +186,12 @@
     },
     "root": {
       "inputs": {
-        "languageModel": "languageModel",
+        "languageModelConfig": "languageModelConfig",
+        "languageModelData": "languageModelData",
         "nixVim": "nixVim",
         "nixpkgs": "nixpkgs_2",
-        "orgmodeSrc": "orgmodeSrc"
+        "orgmodeSrc": "orgmodeSrc",
+        "temporaryHackWavs": "temporaryHackWavs"
       }
     },
     "systems": {
@@ -209,6 +222,19 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "temporaryHackWavs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-bBqB5BVwUjz8tkIE0bZlzvrth8LPdEXWmkUXxLWiuro=",
+        "type": "tarball",
+        "url": "https://files.catbox.moe/m6nxtl.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://files.catbox.moe/m6nxtl.gz"
       }
     }
   },

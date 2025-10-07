@@ -5,6 +5,9 @@
       languageModelPackage = lib.mkOption {
         type = types.either types.package types.path;
       };
+      staticSoundsPackage = lib.mkOption {
+        type = types.either types.package types.path;
+      };
       enable = lib.mkEnableOption "send out notifications via asterisk(phone)";
     };
     package = lib.mkOption {
@@ -51,11 +54,11 @@
     
     systemd.services."orgmode-nvim-daemon" = let
         # Use callpackage TODO 
-        scriptBin = import ./sip_call.sh.nix {inherit lib pkgs ; languageModel = phoneReminder.languageModelPackage; };
+        #scriptBin = import ./sip_call.sh.nix {inherit lib pkgs ; languageModel = phoneReminder.languageModelPackage; };
 
     in lib.optionalAttrs enable {
       path = with pkgs; [
-        scriptBin
+        #scriptBin
         bash
         # TODO V only when we can receive them in any way <DEBUG>
         libnotify
@@ -67,9 +70,14 @@
         #WAYLAND_DISPLAY = "wayland-1";
         #XDG_STATE_HOME = "/run/orgmodenvimd/";
         # TODO rather use the env vars specified below
-        STATIC_SOUNDS_DIR = "/nix/store/l747zs99y5x0w987z0kxm2rx1pl14341-asterisk_custom_piper_sounds/";
+        #STATIC_SOUNDS_DIR = "/nix/store/l747zs99y5x0w987z0kxm2rx1pl14341-asterisk_custom_piper_sounds/";
+
+        # TODO V when this is incorrect no error is being thrown and nothing happens ... also make it so
+        # that config and lm can be passed separately 
+        LANGUAGE_MODEL_FILE = "${config.orgmodeNvimDaemon.phoneReminder.languageModelPackage}/share/lm.onnx";
+        STATIC_SOUNDS_DIR = "${config.orgmodeNvimDaemon.phoneReminder.staticSoundsPackage}/";
         AUDIO_DIR = "/var/lib/orgmodenvimd";
-        CALL_TARGET = "+38500000000";
+        CALL_TARGET = "+49202307435";
         TEMP_DIR = "/run/orgmodenvimd/";
         HOME = "/run/orgmodenvimd";
       };
